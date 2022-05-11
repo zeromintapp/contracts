@@ -40,6 +40,10 @@ contract ERC721WithURI is
         _unpause();
     }
 
+    function mint(address to, string memory uri) {
+        safeMint(to, uri);
+    }
+
     function safeMint(address to, string memory uri) public onlyRole(MINTER_ROLE) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
