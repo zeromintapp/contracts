@@ -7,3 +7,5 @@ EVM Contracts for Zeromint using OpenZeppelin libraries.
 * Install the web3 cli at https://github.com/gochain/web3
 * Then build, eg: `web3 contract build ERC721WithID.sol`
 * Then geneate code, eg: `web3 generate code --abi ERC721WithID.abi --pkg erc721 --out erc721WithID.go`
+
+With help from this cool [contract wizard](https://docs.openzeppelin.com/contracts/4.x/wizard)!
