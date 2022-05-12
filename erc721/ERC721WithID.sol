@@ -11,12 +11,20 @@ contract ERC721WithID is ERC721, Pausable, AccessControl, ERC721Burnable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor (string memory name, string memory symbol)  
+    string private _baseTokenURI;
+
+    constructor (string memory name, string memory symbol, string memory baseTokenURI)  
 	ERC721(name, symbol) 	
 	{
+        _baseTokenURI = baseTokenURI;
+
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseTokenURI;
     }
 
     function pause() public onlyRole(PAUSER_ROLE) {

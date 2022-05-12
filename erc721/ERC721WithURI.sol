@@ -2,27 +2,21 @@
 pragma solidity ^0.8.4;
 
 import "./lib/oz/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "./lib/oz/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./lib/oz/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "./lib/oz/contracts/security/Pausable.sol";
 import "./lib/oz/contracts/access/AccessControl.sol";
 import "./lib/oz/contracts/utils/Context.sol";
-import "./lib/oz/contracts/utils/Counters.sol";
 
 contract ERC721WithURI is
 	Context,
-    ERC721Enumerable,
 	ERC721URIStorage, 
 	Pausable,
     AccessControl,
     ERC721Burnable
 {
 
-	using Counters for Counters.Counter;
-
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    Counters.Counter private _tokenIdCounter;
 
 	constructor (string memory name, string memory symbol)  
 	ERC721(name, symbol) 	
@@ -40,13 +34,10 @@ contract ERC721WithURI is
         _unpause();
     }
 
-    function mint(address to, string memory uri) {
-        safeMint(to, uri);
-    }
-
-    function safeMint(address to, string memory uri) public onlyRole(MINTER_ROLE) {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+    function safeMint(address to, uint256 tokenId, string memory uri)
+        public
+        onlyRole(MINTER_ROLE)
+    {
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
@@ -54,7 +45,7 @@ contract ERC721WithURI is
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         whenNotPaused
-        override(ERC721, ERC721Enumerable)
+        override
     {
         super._beforeTokenTransfer(from, to, tokenId);
     }
@@ -77,7 +68,7 @@ contract ERC721WithURI is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable, AccessControl)
+        override(ERC721, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

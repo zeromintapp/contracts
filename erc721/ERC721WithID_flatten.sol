@@ -1,44 +1,4 @@
 pragma solidity ^0.8.4;
-interface IERC721Receiver {
-    /**
-     * @dev Whenever an {IERC721} `tokenId` token is transferred to this contract via {IERC721-safeTransferFrom}
-     * by `operator` from `from`, this function is called.
-     *
-     * It must return its Solidity selector to confirm the token transfer.
-     * If any other value is returned or the interface is not implemented by the recipient, the transfer will be reverted.
-     *
-     * The selector can be obtained in Solidity with `IERC721Receiver.onERC721Received.selector`.
-     */
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
-    ) external returns (bytes4);
-}
-
-interface IERC165 {
-    /**
-     * @dev Returns true if this contract implements the interface defined by
-     * `interfaceId`. See the corresponding
-     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]
-     * to learn more about how these ids are created.
-     *
-     * This function call must use less than 30 000 gas.
-     */
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-}
-
-abstract contract Context {
-    function _msgSender() internal view virtual returns (address) {
-        return msg.sender;
-    }
-
-    function _msgData() internal view virtual returns (bytes calldata) {
-        return msg.data;
-    }
-}
-
 library Address {
     /**
      * @dev Returns true if `account` is a contract.
@@ -254,64 +214,16 @@ library Address {
     }
 }
 
-library Strings {
-    bytes16 private constant _HEX_SYMBOLS = "0123456789abcdef";
-
+interface IERC165 {
     /**
-     * @dev Converts a `uint256` to its ASCII `string` decimal representation.
+     * @dev Returns true if this contract implements the interface defined by
+     * `interfaceId`. See the corresponding
+     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]
+     * to learn more about how these ids are created.
+     *
+     * This function call must use less than 30 000 gas.
      */
-    function toString(uint256 value) internal pure returns (string memory) {
-        // Inspired by OraclizeAPI's implementation - MIT licence
-        // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
-
-        if (value == 0) {
-            return "0";
-        }
-        uint256 temp = value;
-        uint256 digits;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
-        }
-        bytes memory buffer = new bytes(digits);
-        while (value != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
-            value /= 10;
-        }
-        return string(buffer);
-    }
-
-    /**
-     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation.
-     */
-    function toHexString(uint256 value) internal pure returns (string memory) {
-        if (value == 0) {
-            return "0x00";
-        }
-        uint256 temp = value;
-        uint256 length = 0;
-        while (temp != 0) {
-            length++;
-            temp >>= 8;
-        }
-        return toHexString(value, length);
-    }
-
-    /**
-     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.
-     */
-    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
-        bytes memory buffer = new bytes(2 * length + 2);
-        buffer[0] = "0";
-        buffer[1] = "x";
-        for (uint256 i = 2 * length + 1; i > 1; --i) {
-            buffer[i] = _HEX_SYMBOLS[value & 0xf];
-            value >>= 4;
-        }
-        require(value == 0, "Strings: hex length insufficient");
-        return string(buffer);
-    }
+    function supportsInterface(bytes4 interfaceId) external view returns (bool);
 }
 
 interface IAccessControl {
@@ -395,79 +307,91 @@ interface IAccessControl {
     function renounceRole(bytes32 role, address account) external;
 }
 
-abstract contract Pausable is Context {
+interface IERC721Receiver {
     /**
-     * @dev Emitted when the pause is triggered by `account`.
+     * @dev Whenever an {IERC721} `tokenId` token is transferred to this contract via {IERC721-safeTransferFrom}
+     * by `operator` from `from`, this function is called.
+     *
+     * It must return its Solidity selector to confirm the token transfer.
+     * If any other value is returned or the interface is not implemented by the recipient, the transfer will be reverted.
+     *
+     * The selector can be obtained in Solidity with `IERC721Receiver.onERC721Received.selector`.
      */
-    event Paused(address account);
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4);
+}
+
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view virtual returns (bytes calldata) {
+        return msg.data;
+    }
+}
+
+library Strings {
+    bytes16 private constant _HEX_SYMBOLS = "0123456789abcdef";
 
     /**
-     * @dev Emitted when the pause is lifted by `account`.
+     * @dev Converts a `uint256` to its ASCII `string` decimal representation.
      */
-    event Unpaused(address account);
+    function toString(uint256 value) internal pure returns (string memory) {
+        // Inspired by OraclizeAPI's implementation - MIT licence
+        // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
 
-    bool private _paused;
-
-    /**
-     * @dev Initializes the contract in unpaused state.
-     */
-    constructor() {
-        _paused = false;
+        if (value == 0) {
+            return "0";
+        }
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
+        }
+        return string(buffer);
     }
 
     /**
-     * @dev Returns true if the contract is paused, and false otherwise.
+     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation.
      */
-    function paused() public view virtual returns (bool) {
-        return _paused;
+    function toHexString(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0x00";
+        }
+        uint256 temp = value;
+        uint256 length = 0;
+        while (temp != 0) {
+            length++;
+            temp >>= 8;
+        }
+        return toHexString(value, length);
     }
 
     /**
-     * @dev Modifier to make a function callable only when the contract is not paused.
-     *
-     * Requirements:
-     *
-     * - The contract must not be paused.
+     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.
      */
-    modifier whenNotPaused() {
-        require(!paused(), "Pausable: paused");
-        _;
-    }
-
-    /**
-     * @dev Modifier to make a function callable only when the contract is paused.
-     *
-     * Requirements:
-     *
-     * - The contract must be paused.
-     */
-    modifier whenPaused() {
-        require(paused(), "Pausable: not paused");
-        _;
-    }
-
-    /**
-     * @dev Triggers stopped state.
-     *
-     * Requirements:
-     *
-     * - The contract must not be paused.
-     */
-    function _pause() internal virtual whenNotPaused {
-        _paused = true;
-        emit Paused(_msgSender());
-    }
-
-    /**
-     * @dev Returns to normal state.
-     *
-     * Requirements:
-     *
-     * - The contract must be paused.
-     */
-    function _unpause() internal virtual whenPaused {
-        _paused = false;
-        emit Unpaused(_msgSender());
+    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
+        bytes memory buffer = new bytes(2 * length + 2);
+        buffer[0] = "0";
+        buffer[1] = "x";
+        for (uint256 i = 2 * length + 1; i > 1; --i) {
+            buffer[i] = _HEX_SYMBOLS[value & 0xf];
+            value >>= 4;
+        }
+        require(value == 0, "Strings: hex length insufficient");
+        return string(buffer);
     }
 }
 
@@ -605,15 +529,6 @@ interface IERC721 is IERC165 {
     function isApprovedForAll(address owner, address operator) external view returns (bool);
 }
 
-abstract contract ERC165 is IERC165 {
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return interfaceId == type(IERC165).interfaceId;
-    }
-}
-
 interface IERC721Metadata is IERC721 {
     /**
      * @dev Returns the token collection name.
@@ -629,6 +544,91 @@ interface IERC721Metadata is IERC721 {
      * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
     function tokenURI(uint256 tokenId) external view returns (string memory);
+}
+
+abstract contract Pausable is Context {
+    /**
+     * @dev Emitted when the pause is triggered by `account`.
+     */
+    event Paused(address account);
+
+    /**
+     * @dev Emitted when the pause is lifted by `account`.
+     */
+    event Unpaused(address account);
+
+    bool private _paused;
+
+    /**
+     * @dev Initializes the contract in unpaused state.
+     */
+    constructor() {
+        _paused = false;
+    }
+
+    /**
+     * @dev Returns true if the contract is paused, and false otherwise.
+     */
+    function paused() public view virtual returns (bool) {
+        return _paused;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is not paused.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    modifier whenNotPaused() {
+        require(!paused(), "Pausable: paused");
+        _;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is paused.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    modifier whenPaused() {
+        require(paused(), "Pausable: not paused");
+        _;
+    }
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function _pause() internal virtual whenNotPaused {
+        _paused = true;
+        emit Paused(_msgSender());
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function _unpause() internal virtual whenPaused {
+        _paused = false;
+        emit Unpaused(_msgSender());
+    }
+}
+
+abstract contract ERC165 is IERC165 {
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+        return interfaceId == type(IERC165).interfaceId;
+    }
 }
 
 abstract contract AccessControl is Context, IAccessControl, ERC165 {
@@ -1268,12 +1268,20 @@ contract ERC721WithID is ERC721, Pausable, AccessControl, ERC721Burnable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor (string memory name, string memory symbol)  
+    string private _baseTokenURI;
+
+    constructor (string memory name, string memory symbol, string memory baseTokenURI)  
 	ERC721(name, symbol) 	
 	{
+        _baseTokenURI = baseTokenURI;
+
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseTokenURI;
     }
 
     function pause() public onlyRole(PAUSER_ROLE) {
